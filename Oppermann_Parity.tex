@@ -1,0 +1,617 @@
+% ═══════════════════════════════════════════════════════════════════════
+% Oppermann's Parity Law: Quadratic Residue Symmetry Breaking
+% in Half-Intervals via the Negation Involution
+% Titan Project — Paper X — February 2026
+% ═══════════════════════════════════════════════════════════════════════
+
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[top=28mm, bottom=28mm, left=25mm, right=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{mathrsfs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{float}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Leg}[2]{\left(\frac{#1}{#2}\right)}
+\newcommand{\Lhalf}{\mathcal{L}_n}
+\newcommand{\Rhalf}{\mathcal{R}_n}
+
+\title{\textbf{Oppermann's Parity Law: \\
+Quadratic Residue Symmetry Breaking in \\
+Half-Intervals via the Negation Involution}}
+\author{Ruqing Chen\\[4pt]
+\small GUT Geoservice Inc., Montr\'eal, Canada\\[2pt]
+\small \texttt{ruqing@hotmail.com}\\[2pt]
+\small Repository: \url{https://github.com/Ruqing1963/oppermann-parity-law}}
+\date{February 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We refine the Spin Asymmetry Theorem of \cite{ChenSpin}
+by analyzing the distribution of quadratic residues in the
+\emph{left} and \emph{right halves} of Legendre intervals,
+motivated by Oppermann's conjecture on primes in half-intervals.
+For $n \ge 2$ with $p = 2n - 1$ prime, the interior of
+$\mathcal{I}_n = [(n-1)^2, n^2]$ splits at the midpoint
+$n(n-1)$ into a left half $\Lhalf$ and a right half $\Rhalf$,
+each containing $n - 1$ integers.
+We prove that when $n$ is \emph{even}
+(equivalently $p \equiv 3 \pmod{4}$),
+the right half $\Rhalf$ has \emph{exactly zero}
+quadratic residue skewness modulo $p$:
+the number of QR classes equals the number of NR classes.
+The proof uses the negation involution
+$x \mapsto p - x$ on $(\mathbb{Z}/p\mathbb{Z})^*$,
+which swaps QR $\leftrightarrow$ NR when $p \equiv 3 \pmod{4}$,
+combined with the fact that $\Rhalf$ is closed under this
+involution.
+Consequently, the global skewness $N^- - N^+ = 1$ from
+\cite{ChenSpin} is carried \emph{entirely} by the left half.
+The theorem is verified computationally for all
+87 qualifying even $n \le 500$.
+We also prove a complementary result for odd $n$
+($p \equiv 1 \pmod{4}$): the right half skewness is
+always even and generically nonzero.
+\end{abstract}
+
+\bigskip
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Introduction}\label{sec:intro}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{Oppermann's conjecture}
+
+Oppermann's conjecture (1882) strengthens Legendre's conjecture
+by asserting that for every $n \ge 2$, there exists a prime in
+\emph{each} of the two half-intervals
+\[
+    (n^2 - n, \, n^2)
+    \quad\text{and}\quad
+    (n^2, \, n^2 + n).
+\]
+Equivalently, using our indexing of the Legendre interval
+$\mathcal{I}_n = [(n-1)^2, n^2]$, the conjecture demands
+primes on \emph{both} sides of the midpoint $n(n-1)$.
+
+In the companion paper \cite{ChenSpin}, we proved the
+Spin Asymmetry Theorem: the interior of $\mathcal{I}_n$
+(when $p = 2n - 1$ is prime) has exactly one more quadratic
+non-residue than quadratic residue modulo $p$.
+This global asymmetry was left undissected---it was not known
+how the skewness distributes between the two halves.
+
+\subsection{Main result: the Parity Law}
+
+We prove (Theorem~\ref{thm:parity}) that for even $n$,
+the global skewness is distributed in the most extreme
+possible way: the right half carries \emph{zero} skewness,
+and the left half carries \emph{all} of the asymmetry.
+
+The proof reveals a clean algebraic mechanism:
+the negation involution $\iota : x \mapsto p - x$ on
+$(\mathbb{Z}/p\mathbb{Z})^*$
+swaps QR $\leftrightarrow$ NR precisely when $p \equiv 3 \pmod{4}$
+(i.e., when $n$ is even),
+and the residue classes of $\Rhalf$ are closed under $\iota$.
+This forces perfect QR/NR pairing in $\Rhalf$.
+
+\subsection{Context within the Titan Project}
+
+This paper continues the algebraic programme initiated in
+\cite{ChenSpin}, building on the conductor rigidity framework
+of \cite{ChenConductor, ChenLandau, ChenAP} and the
+function field resolution in \cite{ChenFF}.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Setup and Preliminaries}\label{sec:setup}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{definition}[Half-intervals]\label{def:halves}
+For $n \ge 2$, the \emph{left half} and \emph{right half}
+of the Legendre interval $\mathcal{I}_n = [(n-1)^2, n^2]$ are
+\begin{align*}
+    \Lhalf &= \{(n-1)^2 + 1,\; \ldots,\; n(n-1)\}, \\
+    \Rhalf &= \{n(n-1) + 1,\; \ldots,\; n^2 - 1\}.
+\end{align*}
+Each half has cardinality $n - 1$.
+The full interior is
+$\mathcal{I}_n^\circ = \Lhalf \cup \Rhalf$.
+\end{definition}
+
+\begin{definition}[Local skewness]\label{def:skewness}
+For a set $S$ of integers and an odd prime $p$, define
+\[
+    \mathrm{Skew}_p(S)
+    \;=\;
+    \#\{x \in S : \Leg{x}{p} = -1\}
+    \;-\;
+    \#\{x \in S : \Leg{x}{p} = +1\}.
+\]
+\end{definition}
+
+From \cite{ChenSpin}, we know
+$\mathrm{Skew}_p(\mathcal{I}_n^\circ) = 1$
+whenever $p = 2n - 1$ is prime.
+By additivity:
+\begin{equation}\label{eq:global}
+    \mathrm{Skew}_p(\Lhalf) + \mathrm{Skew}_p(\Rhalf) = 1.
+\end{equation}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{The Anchor Position}\label{sec:anchor}
+% ═══════════════════════════════════════════════════════════════════════
+
+By \cite[Lemma~2.4]{ChenSpin}, the interior
+$\mathcal{I}_n^\circ$ contains a unique multiple of $p$
+(the \emph{anchor}, with Legendre symbol $0$).
+Its position determines which half inherits the anchor.
+
+\begin{lemma}[Anchor offset]\label{lem:anchor}
+Let $n \ge 2$ with $p = 2n - 1$ prime.
+The unique multiple of $p$ in $\mathcal{I}_n^\circ$ is located
+at offset
+\[
+    \delta
+    \;=\;
+    \begin{cases}
+    \dfrac{3n - 2}{2} & \text{if $n$ is even
+    (i.e., $p \equiv 3 \pmod{4}$),} \\[8pt]
+    \dfrac{n - 1}{2} & \text{if $n$ is odd
+    (i.e., $p \equiv 1 \pmod{4}$),}
+    \end{cases}
+\]
+from the left endpoint $(n-1)^2$.
+In particular:
+\begin{enumerate}[nosep, label=(\roman*)]
+\item If $n$ is even, then $\delta \ge n$,
+so the anchor lies in $\Rhalf$.
+\item If $n$ is odd, then $\delta < n$,
+so the anchor lies in $\Lhalf$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The anchor $m$ satisfies $m \equiv 0 \pmod{p}$ and
+$(n-1)^2 < m < n^2$.
+Its offset from $(n-1)^2$ is
+$\delta = m - (n-1)^2 \equiv -(n-1)^2 \equiv -n^2 \pmod{p}$
+(using $(n-1)^2 \equiv n^2 \pmod{p}$ from \cite{ChenSpin}).
+
+From $4n^2 = (2n-1)(2n+1) + 1$, we get $4n^2 \equiv 1 \pmod{p}$,
+so $n^2 \equiv 4^{-1} \pmod{p}$.
+
+\emph{Case $n$ even} ($p \equiv 3 \pmod{4}$):
+$4^{-1} \equiv (p+1)/4 \pmod{p}$ since
+$4 \cdot (p+1)/4 = p + 1 \equiv 1$.
+Thus $\delta \equiv -\tfrac{p+1}{4}
+\equiv \tfrac{3p-1}{4}
+= \tfrac{3(2n-1)-1}{4}
+= \tfrac{3n-2}{2} \pmod{p}$.
+Since $n \le (3n-2)/2 \le 2n-2$ for $n \ge 2$,
+$\delta$ falls in the right half.
+
+\emph{Case $n$ odd} ($p \equiv 1 \pmod{4}$):
+$4^{-1} \equiv (3p+1)/4 \pmod{p}$ since
+$4 \cdot (3p+1)/4 = 3p + 1 \equiv 1$.
+Thus $\delta \equiv -\tfrac{3p+1}{4}
+\equiv \tfrac{p-1}{4}
+= \tfrac{n-1}{2} \pmod{p}$.
+Since $1 \le (n-1)/2 \le n-1$ for $n \ge 3$,
+$\delta$ falls in the left half.
+\end{proof}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{The Negation Involution and the Parity Law}
+\label{sec:parity}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{The involution}
+
+\begin{definition}\label{def:involution}
+The \emph{negation involution} on $\mathbb{Z}/p\mathbb{Z}$
+is the map $\iota(x) = p - x \pmod{p}$.
+On the nonzero elements, $\iota$ is a fixed-point-free involution
+(since $p$ is odd, $\iota(x) = x$ implies $2x \equiv 0$,
+hence $x \equiv 0$).
+\end{definition}
+
+\begin{lemma}[Spin-flip lemma]\label{lem:spinflip}
+For $a \not\equiv 0 \pmod{p}$:
+\[
+    \Leg{p - a}{p}
+    \;=\;
+    \Leg{-1}{p} \cdot \Leg{a}{p}
+    \;=\;
+    \begin{cases}
+    -\Leg{a}{p} & \text{if } p \equiv 3 \pmod{4}, \\[4pt]
+    +\Leg{a}{p} & \text{if } p \equiv 1 \pmod{4}.
+    \end{cases}
+\]
+\end{lemma}
+
+\begin{proof}
+$\Leg{p-a}{p} = \Leg{-a}{p} = \Leg{-1}{p}\Leg{a}{p}$.
+By the classical evaluation, $\Leg{-1}{p} = (-1)^{(p-1)/2}$,
+which is $-1$ when $p \equiv 3$ and $+1$ when $p \equiv 1$.
+\end{proof}
+
+\subsection{Involution closure of the right half}
+
+\begin{lemma}\label{lem:closure}
+Let $n \ge 2$ with $p = 2n - 1$ prime.
+Let $S_R$ denote the set of residues modulo $p$ of elements
+of $\Rhalf$, and let $S_R^* = S_R \setminus \{0\}$.
+Then $\iota(S_R^*) = S_R^*$; that is, $S_R^*$ is closed
+under the negation involution.
+\end{lemma}
+
+\begin{proof}
+The elements of $\Rhalf$ have offsets $n, n+1, \ldots, 2n-2$
+from $(n-1)^2$.
+Since $(n-1)^2 \equiv r \pmod{p}$ (where $r = n^2 \bmod p$),
+the residues of $\Rhalf$ are
+$\{r + n,\; r + n + 1,\; \ldots,\; r + 2n - 2\} \pmod{p}$,
+a set of $n - 1$ consecutive residue classes.
+
+For $a = r + j$ with $n \le j \le 2n - 2$, we have
+$\iota(a) = p - r - j$.
+From the proof of Lemma~\ref{lem:anchor}:
+$r \equiv n^2 \equiv 4^{-1} \pmod{p}$, so
+$p - 2r \equiv p - 2 \cdot 4^{-1} \equiv p - (p+1)/2
+\equiv (p-1)/2 = n - 1 \pmod{p}$
+(when $p \equiv 3 \bmod 4$; the $p \equiv 1$ case is similar).
+
+Thus $\iota(a) = (n - 1) - j + r \pmod{p}$,
+and we need to check that $(n-1) - j$ maps
+$\{n, \ldots, 2n-2\}$ to itself modulo $p$.
+Indeed, as $j$ ranges from $n$ to $2n - 2$,
+$(n-1) - j$ ranges from $-1$ to $-(n-1)$,
+which modulo $p = 2n - 1$ is $2n - 2$ down to $n$.
+This is exactly the same set.
+
+The argument is identical for $p \equiv 1 \pmod{4}$
+(using the corresponding value of $4^{-1}$).
+\end{proof}
+
+\subsection{The main theorem}
+
+\begin{theorem}[Oppermann Parity Law]\label{thm:parity}
+Let $n \ge 2$ be an \emph{even} integer with
+$p = 2n - 1$ prime.
+Then:
+\begin{enumerate}[nosep, label=(\roman*)]
+\item The right half $\Rhalf$ contains
+$(n-2)/2$ quadratic residues,
+$(n-2)/2$ quadratic non-residues,
+and $1$ multiple of $p$:
+\[
+    \mathrm{Skew}_p(\Rhalf) = 0.
+\]
+\item The left half $\Lhalf$ contains
+$(n-2)/2$ quadratic residues and $n/2$
+quadratic non-residues:
+\[
+    \mathrm{Skew}_p(\Lhalf) = 1.
+\]
+\item The global skewness $N^- - N^+ = 1$ is carried
+entirely by the left half.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Since $n$ is even, $p \equiv 3 \pmod{4}$
+(Lemma~\ref{lem:anchor}).
+
+\textbf{(i)}
+By Lemma~\ref{lem:anchor}(i), the anchor lies in $\Rhalf$.
+The remaining $n - 2$ elements of $\Rhalf$ have nonzero
+residues forming the set $S_R^*$.
+By Lemma~\ref{lem:closure}, $S_R^*$ is closed under $\iota$.
+Since $n - 2$ is even (as $n$ is even), $\iota$ partitions
+$S_R^*$ into $(n-2)/2$ orbits of size $2$.
+By Lemma~\ref{lem:spinflip}, each orbit $\{a, \iota(a)\}$
+contains one QR and one NR (since $p \equiv 3 \pmod{4}$).
+Therefore $N^+_R = N^-_R = (n-2)/2$ and
+$\mathrm{Skew}_p(\Rhalf) = 0$.
+
+\textbf{(ii)} Follows from
+$\mathrm{Skew}_p(\Lhalf) = 1 - \mathrm{Skew}_p(\Rhalf) = 1$
+via \eqref{eq:global}.
+
+\textbf{(iii)} Immediate from (i) and (ii).
+\end{proof}
+
+\subsection{The complementary case: odd $n$}
+
+\begin{theorem}\label{thm:odd}
+Let $n \ge 3$ be an \emph{odd} integer with
+$p = 2n - 1$ prime.
+Then the right half skewness $\mathrm{Skew}_p(\Rhalf)$
+is always \emph{even} (but generically nonzero).
+\end{theorem}
+
+\begin{proof}
+When $n$ is odd, $p \equiv 1 \pmod{4}$ and the anchor
+lies in $\Lhalf$ (Lemma~\ref{lem:anchor}(ii)).
+Thus $\Rhalf$ has $n - 1$ elements, all with nonzero
+residues.
+By Lemma~\ref{lem:closure}, $S_R^*$ is still closed under
+$\iota$, and since $n - 1$ is even, $\iota$ partitions
+$S_R^*$ into $(n-1)/2$ pairs.
+But now $p \equiv 1 \pmod{4}$, so by
+Lemma~\ref{lem:spinflip}, $\iota$ \emph{preserves} the
+Legendre symbol: each pair $\{a, \iota(a)\}$ consists of
+two QRs or two NRs.
+Hence $N^+_R$ and $N^-_R$ are both even, and
+$\mathrm{Skew}_p(\Rhalf) = N^-_R - N^+_R$ is even.
+\end{proof}
+
+\begin{remark}\label{rem:contrast}
+The contrast between even and odd $n$ is entirely
+controlled by the single arithmetic invariant $\Leg{-1}{p}$:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c c c c}
+\toprule
+$n$ parity & $p \bmod 4$ & $\Leg{-1}{p}$ &
+$\iota$ action on QR/NR \\
+\midrule
+even & $3$ & $-1$ & swaps QR $\leftrightarrow$ NR
+$\;\Rightarrow\;$ pairing $\;\Rightarrow\;$ skewness $= 0$ \\
+odd  & $1$ & $+1$ & preserves QR, NR
+$\;\Rightarrow\;$ no cross-pairing $\;\Rightarrow\;$ skewness even \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{remark}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Computational Verification}\label{sec:computation}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{Methodology}
+
+For each $n$ with $p = 2n - 1$ prime, the scanner
+computes the Jacobi symbol $\Leg{x}{p}$ for every integer $x$
+in each half-interval, tallies positive/negative/zero spins,
+and records the skewness $N^- - N^+$ for each half.
+
+\subsection{Results for even $n$}
+
+\begin{table}[H]
+\centering
+\caption{Half-interval spin distribution for even $n$
+($p \equiv 3 \pmod{4}$).
+In every case, $\mathrm{Skew}(\Rhalf) = 0$ and the
+anchor lies in $\Rhalf$.}
+\label{tab:even}
+\medskip
+\begin{tabular}{@{}r r r r r r r r r@{}}
+\toprule
+$n$ & $p$ &
+$N^+_L$ & $N^-_L$ & $N^0_L$ & Skew$_L$ &
+$N^+_R$ & $N^-_R$ & Skew$_R$ \\
+\midrule
+2   & 3   & 0  & 1  & 0  & 1  & 0  & 0  & \textbf{0} \\
+4   & 7   & 1  & 2  & 0  & 1  & 1  & 1  & \textbf{0} \\
+6   & 11  & 2  & 3  & 0  & 1  & 2  & 2  & \textbf{0} \\
+10  & 19  & 4  & 5  & 0  & 1  & 4  & 4  & \textbf{0} \\
+12  & 23  & 5  & 6  & 0  & 1  & 5  & 5  & \textbf{0} \\
+16  & 31  & 7  & 8  & 0  & 1  & 7  & 7  & \textbf{0} \\
+22  & 43  & 10 & 11 & 0  & 1  & 10 & 10 & \textbf{0} \\
+100 & 199 & 49 & 50 & 0  & 1  & 49 & 49 & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proposition}\label{prop:verified}
+Theorem~\ref{thm:parity} has been verified computationally
+for all 87 even values of $n \le 500$ with $2n - 1$ prime.
+In every case, $\mathrm{Skew}_p(\Rhalf) = 0$ and
+$\mathrm{Skew}_p(\Lhalf) = 1$.
+\end{proposition}
+
+\subsection{Results for odd $n$}
+
+\begin{table}[H]
+\centering
+\caption{Half-interval spin distribution for odd $n$
+($p \equiv 1 \pmod{4}$).
+The right half skewness is always even but varies.
+The anchor lies in $\Lhalf$.}
+\label{tab:odd}
+\medskip
+\begin{tabular}{@{}r r r r r r r r r@{}}
+\toprule
+$n$ & $p$ &
+$N^+_L$ & $N^-_L$ & $N^0_L$ & Skew$_L$ &
+$N^+_R$ & $N^-_R$ & Skew$_R$ \\
+\midrule
+3   & 5   & 1  & 0  & 1  & $-1$ & 0  & 2  & $2$ \\
+7   & 13  & 3  & 2  & 1  & $-1$ & 2  & 4  & $2$ \\
+9   & 17  & 5  & 2  & 1  & $-3$ & 2  & 6  & $4$ \\
+15  & 29  & 9  & 4  & 1  & $-5$ & 4  & 10 & $6$ \\
+21  & 41  & 13 & 6  & 1  & $-7$ & 6  & 14 & $8$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Structural Interpretation}\label{sec:interpretation}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{The right half as an algebraically neutral zone}
+
+For even $n$, the right half $\Rhalf$ is in a state of
+\emph{perfect algebraic equilibrium}: its quadratic residue
+distribution is exactly symmetric.
+This is not a statistical accident; it is forced by the
+involution $\iota$ acting as a QR/NR swap on a closed
+domain.
+
+The left half, by contrast, carries the full topological
+defect: it is the sole repository of the global skewness
+$+1$.
+This asymmetry between the halves echoes the asymmetry
+in Oppermann's conjecture itself, which treats the left
+and right half-intervals as structurally distinct.
+
+\subsection{Obstruction interpretation}
+
+A hypothetical ``prime vacuum'' in $\Rhalf$
+(all elements composite) would require $n - 1$ consecutive
+composites maintaining \emph{exact} QR/NR balance modulo $p$.
+While the Parity Law proves this balance is algebraically
+mandated (regardless of whether primes are present),
+the \emph{multiplicative} realization of such a balanced
+configuration by composites alone faces additional
+constraints not captured by the residue structure.
+
+We emphasize that the Parity Law does not by itself
+prove Oppermann's conjecture.
+It establishes a structural framework---the algebraic
+neutrality of $\Rhalf$ and the defect-carrying role of
+$\Lhalf$---within which the conjecture can be studied.
+
+\subsection{Limitations}
+
+The Parity Law applies only when $p = 2n - 1$ is prime,
+which restricts to roughly half of all $n$ values.
+When $p$ is composite, the Jacobi symbol replaces the
+Legendre symbol, the QR/NR counts are no longer simply
+$(p-1)/2$ each, and the involution argument does not
+directly apply.
+Extending the framework to composite $p$ is an open problem.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Discussion}\label{sec:discussion}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{Relation to character sums}
+
+The Parity Law can be restated as a character sum identity.
+For even $n$ with $p = 2n - 1$ prime:
+\[
+    \sum_{x \in \Rhalf} \Leg{x}{p}
+    \;=\; N^+_R - N^-_R
+    \;=\; 0.
+\]
+This is a \emph{partial character sum} over $n - 1$
+consecutive integers.
+While partial character sums are typically bounded by
+$O(\sqrt{p}\log p)$ via the P\'olya--Vinogradov inequality,
+here we obtain an \emph{exact} evaluation of zero---a much
+stronger result, albeit for a specific sub-interval
+determined by the arithmetic of $n$.
+
+\subsection{Connection to Paper IX}
+
+The Spin Asymmetry Theorem of \cite{ChenSpin}
+established the global identity $N^- - N^+ = 1$.
+The present paper decomposes this identity into
+local contributions:
+\[
+    \underbrace{1}_{\text{left}} \;+\;
+    \underbrace{0}_{\text{right}} \;=\; 1
+    \qquad\text{(even $n$)},
+    \qquad\qquad
+    \underbrace{1 - R}_{\text{left}} \;+\;
+    \underbrace{R}_{\text{right}} \;=\; 1
+    \qquad\text{(odd $n$, $R$ even)}.
+\]
+The even case is maximally rigid; the odd case
+distributes the skewness in a manner that remains
+to be fully understood.
+
+\subsection{Open questions}
+
+\begin{enumerate}[label=(\arabic*)]
+\item \emph{Odd $n$ skewness.}
+For odd $n$, the right half skewness
+$\mathrm{Skew}_p(\Rhalf)$ is always a positive even
+integer in our data. Is it always positive?
+Is there a closed-form expression in terms of class
+numbers or character sums?
+
+\item \emph{Sub-interval character sums.}
+Can the exact vanishing of the partial character sum
+over $\Rhalf$ be derived from classical results on
+Gauss sums or Jacobi sums?
+
+\item \emph{Composite lengths.}
+When $p = 2n - 1$ is composite, can a modified involution
+argument yield analogous (approximate) parity constraints?
+
+\item \emph{Multiplicative refinement.}
+Among the $(n-2)/2$ QR--NR pairs in $\Rhalf$ (for even $n$),
+how many pairs consist of a prime and a composite?
+This would connect the algebraic structure to the
+distribution of primes in the half-interval.
+\end{enumerate}
+
+\subsection*{Data and code availability}
+
+Source code and the \LaTeX{} manuscript are available at
+\url{https://github.com/Ruqing1963/oppermann-parity-law}.
+The companion Paper~IX repository is at
+\url{https://github.com/Ruqing1963/legendre-spin-asymmetry}.
+
+% ═══════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{ChenConductor}
+  R.~Chen,
+  ``Conductor incompressibility for Frey curves associated to
+  prime gaps,''
+  Zenodo, 2026.
+  \url{https://zenodo.org/records/18682375}
+
+\bibitem{ChenLandau}
+  R.~Chen,
+  ``On Landau's fourth problem: conductor rigidity and
+  Sato--Tate equidistribution for the $n^2+1$ family,''
+  Zenodo, 2026.
+  \url{https://zenodo.org/records/18683712}
+
+\bibitem{ChenAP}
+  R.~Chen,
+  ``The 2-2 coincidence: conductor rigidity for primes in
+  arithmetic progressions and the Bombieri--Vinogradov barrier,''
+  Zenodo, 2026.
+  \url{https://zenodo.org/records/18684151}
+
+\bibitem{ChenFF}
+  R.~Chen,
+  ``The geometry of prime vacuums: Legendre's conjecture in
+  function fields via monodromy and Chebotarev density,''
+  Zenodo, 2026.
+  \url{https://zenodo.org/records/18705744}
+
+\bibitem{ChenSpin}
+  R.~Chen,
+  ``Algebraic rigidity and quadratic residue asymmetry in
+  Legendre intervals,''
+  Zenodo, 2026.
+  \url{https://zenodo.org/records/18706876}
+
+\end{thebibliography}
+
+\end{document}
